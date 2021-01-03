@@ -5,6 +5,7 @@
         Idle,
         Jumping,
         Falling,
+        Running,
         Accelerating,
         Decelerating
     }

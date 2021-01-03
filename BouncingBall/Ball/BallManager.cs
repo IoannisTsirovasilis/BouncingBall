@@ -8,6 +8,8 @@ namespace BouncingBall.Ball
     {
         private readonly BallEntity _ball;
 
+        public int DrawOrder => 0;
+
         public BallManager(BallEntity ball)
         {
             _ball = ball;
