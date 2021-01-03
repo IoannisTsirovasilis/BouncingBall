@@ -32,13 +32,16 @@ namespace BouncingBall.Ball
 
         public void Update(GameTime gameTime)
         {
-            if (ShouldJump())
+            if (_ball.IsAlive)
             {
-                _ball.Jump();
-            }
-            else if (ShouldFall())
-            {
-                _ball.Fall();
+                if (ShouldJump())
+                {
+                    _ball.Jump();
+                }
+                else if (ShouldFall())
+                {
+                    _ball.Fall();
+                }
             }
         }
     }

@@ -20,17 +20,20 @@ namespace BouncingBall.Ball
         {
             KeyboardState keyboardState = Keyboard.GetState();
 
-            if (IsAccelerating(keyboardState))
+            if (_ball.IsAlive)
             {
-                _ball.Accelerate();
-            }
-            else if (IsDecelerating(keyboardState))
-            {
-                _ball.Decelerate();
-            }
-            else
-            {
-                _ball.Run();
+                if (IsAccelerating(keyboardState))
+                {
+                    _ball.Accelerate();
+                }
+                else if (IsDecelerating(keyboardState))
+                {
+                    _ball.Decelerate();
+                }
+                else
+                {
+                    _ball.Run();
+                }
             }
         }
         

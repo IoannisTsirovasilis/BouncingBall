@@ -39,7 +39,6 @@ namespace BouncingBall.Entities
 
             _entitiesToAdd.Clear();
             _entitiesToRemove.Clear();
-
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
