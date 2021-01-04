@@ -1,5 +1,6 @@
 ﻿using BouncingBall.Ball;
 using BouncingBall.Entities.ScoreBoard;
+using BouncingBall.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,7 @@ namespace BouncingBall.Entities.Coin
         private readonly ScoreBoardEntity _scoreBoard;
         private readonly Random _random;
         private readonly SoundEffect _coinPickupSoundEffect;
+        private readonly TextureAnimation _rotatingCoinAnimation;
 
         private int _lastSpawnScore = -1;
         private double _currentTargetDistance;
@@ -35,7 +37,7 @@ namespace BouncingBall.Entities.Coin
         private bool CanSpawnCoins => _ball.IsAlive && _scoreBoard.Score >= MIN_SPAWN_DISTANCE;
 
         public CoinManager(Texture2D spriteSheet, BallEntity ball, ScoreBoardEntity scoreBoard, 
-            EntityManager entityManager, SoundEffect coinPickupSoundEffect)
+            EntityManager entityManager, SoundEffect coinPickupSoundEffect, TextureAnimation rotatingCoinAnimation)
         {
             _ball = ball;
             _entityManager = entityManager;
@@ -43,6 +45,7 @@ namespace BouncingBall.Entities.Coin
             _scoreBoard = scoreBoard;
             _random = new Random();
             _coinPickupSoundEffect = coinPickupSoundEffect;
+            _rotatingCoinAnimation = rotatingCoinAnimation;
         }
 
         public void Initialize()
@@ -55,6 +58,10 @@ namespace BouncingBall.Entities.Coin
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            foreach (CoinEntity coin in _entityManager.GetEntitiesOfType<CoinEntity>())
+            {
+                _rotatingCoinAnimation.Draw(spriteBatch, coin.Position);
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -72,19 +79,24 @@ namespace BouncingBall.Entities.Coin
                 SpawnCoin();
             }
 
-            foreach (CoinEntity wall in _entityManager.GetEntitiesOfType<CoinEntity>())
+            foreach (CoinEntity coin in _entityManager.GetEntitiesOfType<CoinEntity>())
             {
-                if (wall.Position.X < COIN_DESPAWN_POS_X)
-                    _entityManager.RemoveEntity(wall);
+                if (coin.Position.X < COIN_DESPAWN_POS_X)
+                {
+                    _entityManager.RemoveEntity(coin);
+                }
+
+                CheckCollisions(coin);
             }
+
+            _rotatingCoinAnimation.Update(gameTime);
         }
 
         private void SpawnCoin()
         {
             for (int i = 0; i < COINS_TO_SPAWN; i++)
             {
-                CoinEntity wall = new CoinEntity(_texture, new Vector2(COIN_POS_X + i * COINS_DISTANCE, COIN_POS_Y), 
-                    _ball, _scoreBoard, _entityManager, _coinPickupSoundEffect);
+                CoinEntity wall = new CoinEntity(_texture, new Vector2(COIN_POS_X + i * COINS_DISTANCE, COIN_POS_Y), _ball);
                 _entityManager.AddEntity(wall);
             }
         }
@@ -98,6 +110,17 @@ namespace BouncingBall.Entities.Coin
 
             _currentTargetDistance = 0;
             _lastSpawnScore = -1;
+        }
+
+        private void CheckCollisions(CoinEntity coin)
+        {
+            if (coin.CollisionBox.Intersects(_ball.CollisionBox))
+            {
+                _scoreBoard.IncreaseCoinsCollected();
+                _coinPickupSoundEffect.Play();
+                _entityManager.RemoveEntity(coin);
+            }
+
         }
     }
 }

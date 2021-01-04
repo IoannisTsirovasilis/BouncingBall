@@ -2,6 +2,7 @@
 using BouncingBall.Entities;
 using BouncingBall.Entities.Coin;
 using BouncingBall.Entities.ScoreBoard;
+using BouncingBall.Graphics;
 using BouncingBall.Ground;
 using BouncingBall.Wall;
 using Microsoft.Xna.Framework;
@@ -23,8 +24,13 @@ namespace BouncingBall
         private const string ASSET_NAME_GROUND = "ground";
         private const string ASSET_NAME_WALL = "wall";
         private const string ASSET_NAME_SCORE_BOARD_FONT = "score-board";
-        private const string ASSET_NAME_COIN = "coin-0";
+        private const string ASSET_NAME_COIN_0 = "coin-0";
+        private const string ASSET_NAME_COIN_1 = "coin-1";
+        private const string ASSET_NAME_COIN_2 = "coin-2";
+        private const string ASSET_NAME_COIN_3 = "coin-3";
+        private const string ASSET_NAME_COIN_4 = "coin-4";
         private const string ASSET_NAME_COIN_PICKUP = "coin-pickup";
+        private const float ROTATING_COIN_ANIMATION_FRAME_DURATION = 0.15f;
 
         private BallEntity _ball;
         private BallManager _ballManager;
@@ -36,6 +42,12 @@ namespace BouncingBall
         private WallManager _wallManager;
         private CoinManager _coinManager;
         private SoundEffect _coinPickupSoundEffect;
+        private TextureAnimation _rotatingCoinAnimation;
+        private Texture2D _coin0;
+        private Texture2D _coin1;
+        private Texture2D _coin2;
+        private Texture2D _coin3;
+        private Texture2D _coin4;
 
         private const int BALL_POS_X = 10;
         private const int BALL_POS_Y = WINDOW_HEIGHT - 96;
@@ -82,8 +94,24 @@ namespace BouncingBall
 
             _coinPickupSoundEffect = Content.Load<SoundEffect>(ASSET_NAME_COIN_PICKUP);
 
-            var coinTexture = Content.Load<Texture2D>(ASSET_NAME_COIN);
-            _coinManager = new CoinManager(coinTexture, _ball, _scoreBoard, _entityManager, _coinPickupSoundEffect);
+            _rotatingCoinAnimation = new TextureAnimation();
+
+            _coin0 = Content.Load<Texture2D>(ASSET_NAME_COIN_0);
+            _coin1 = Content.Load<Texture2D>(ASSET_NAME_COIN_1);
+            _coin2 = Content.Load<Texture2D>(ASSET_NAME_COIN_2);
+            _coin3 = Content.Load<Texture2D>(ASSET_NAME_COIN_3);
+            _coin4 = Content.Load<Texture2D>(ASSET_NAME_COIN_4);
+
+            _rotatingCoinAnimation.AddFrame(_coin0, ROTATING_COIN_ANIMATION_FRAME_DURATION);
+            _rotatingCoinAnimation.AddFrame(_coin1, ROTATING_COIN_ANIMATION_FRAME_DURATION * 2);
+            _rotatingCoinAnimation.AddFrame(_coin2, ROTATING_COIN_ANIMATION_FRAME_DURATION * 3);
+            _rotatingCoinAnimation.AddFrame(_coin3, ROTATING_COIN_ANIMATION_FRAME_DURATION * 4);
+            _rotatingCoinAnimation.AddFrame(_coin4, ROTATING_COIN_ANIMATION_FRAME_DURATION * 5);
+
+            _rotatingCoinAnimation.Play();
+
+            _coinManager = new CoinManager(_coin0, _ball, _scoreBoard, _entityManager, _coinPickupSoundEffect,
+                _rotatingCoinAnimation);
 
             
 
@@ -118,7 +146,7 @@ namespace BouncingBall
             GraphicsDevice.Clear(Color.White);
 
             _spriteBatch.Begin();
-            _entityManager.Draw(_spriteBatch, gameTime);            
+            _entityManager.Draw(_spriteBatch, gameTime);
             _spriteBatch.End();
 
             base.Draw(gameTime);
