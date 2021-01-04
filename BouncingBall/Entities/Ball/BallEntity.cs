@@ -10,11 +10,11 @@ namespace BouncingBall.Ball
         public Texture2D Texture { get; }
         public float Speed { get; private set; }
         private readonly float _accelerationPerSecond = 30f;
-        private float _accelerateSpeed = 800;
-        private float _decelerateSpeed = 200f;
-        private float _runningSpeed = 400f;
+        private float _accelerateSpeed = 400;
+        private float _decelerateSpeed = 10f;
+        private float _runningSpeed = 200;
         public const float MAX_SPEED = 1600f;
-        public const float START_SPEED = 400f;
+        public const float START_SPEED = 200;
         public float StartPosY { get; }
         public BallState State { get; private set; }
 

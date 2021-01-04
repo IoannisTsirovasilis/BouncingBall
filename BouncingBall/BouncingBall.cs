@@ -1,9 +1,11 @@
 ﻿using BouncingBall.Ball;
 using BouncingBall.Entities;
+using BouncingBall.Entities.Coin;
 using BouncingBall.Entities.ScoreBoard;
 using BouncingBall.Ground;
 using BouncingBall.Wall;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -21,6 +23,8 @@ namespace BouncingBall
         private const string ASSET_NAME_GROUND = "ground";
         private const string ASSET_NAME_WALL = "wall";
         private const string ASSET_NAME_SCORE_BOARD_FONT = "score-board";
+        private const string ASSET_NAME_COIN = "coin-0";
+        private const string ASSET_NAME_COIN_PICKUP = "coin-pickup";
 
         private BallEntity _ball;
         private BallManager _ballManager;
@@ -30,10 +34,12 @@ namespace BouncingBall
         private ScoreBoardEntity _scoreBoard;
         private SpriteFont _scoreBoardFont;
         private WallManager _wallManager;
+        private CoinManager _coinManager;
+        private SoundEffect _coinPickupSoundEffect;
 
         private const int BALL_POS_X = 10;
         private const int BALL_POS_Y = WINDOW_HEIGHT - 96;
-        private const int SCORE_BOARD_POS_X = WINDOW_WIDTH - 200;
+        private const int SCORE_BOARD_POS_X = WINDOW_WIDTH - 400;
         private const int SCORE_BOARD_POS_Y = 10;
 
         public BouncingBall()
@@ -73,11 +79,20 @@ namespace BouncingBall
 
             var wallTexture = Content.Load<Texture2D>(ASSET_NAME_WALL);
             _wallManager = new WallManager(wallTexture, _ball, _scoreBoard, _entityManager);
+
+            _coinPickupSoundEffect = Content.Load<SoundEffect>(ASSET_NAME_COIN_PICKUP);
+
+            var coinTexture = Content.Load<Texture2D>(ASSET_NAME_COIN);
+            _coinManager = new CoinManager(coinTexture, _ball, _scoreBoard, _entityManager, _coinPickupSoundEffect);
+
+            
+
             _entityManager.AddEntity(_ball);
             _entityManager.AddEntity(_ballManager);
             _entityManager.AddEntity(_groundManager);
             _entityManager.AddEntity(_scoreBoard);
             _entityManager.AddEntity(_wallManager);
+            _entityManager.AddEntity(_coinManager);
 
             _groundManager.Initialize();
         }
@@ -114,12 +129,12 @@ namespace BouncingBall
             _ball.Initialize();
 
             _wallManager.Reset();
-            _scoreBoard.Score = 0;
+            _coinManager.Reset();
+            _scoreBoard.Reset();
 
             _groundManager.Initialize();
 
             return true;
-
         }
     }
 }

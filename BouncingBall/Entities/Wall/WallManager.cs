@@ -23,8 +23,8 @@ namespace BouncingBall.Wall
         private const int WALL_POS_Y = 450 - 96;
         private const int WALL_HEIGHT = 64;
         private const int MIN_SPAWN_DISTANCE = 1500;
-        private const int MIN_WALL_DISTANCE = 1200;
-        private const int MAX_WALL_DISTANCE = 2000;
+        private const int MIN_WALL_DISTANCE = 600;
+        private const int MAX_WALL_DISTANCE = 900;
         private const int WALL_DISTANCE_SPEED_TOLERANCE = 40;
 
         public int DrawOrder => 0;
@@ -53,8 +53,7 @@ namespace BouncingBall.Wall
 
         public void Update(GameTime gameTime)
         {
-            if (CanSpawnWalls &&
-                (_lastSpawnScore <= 0 || (_scoreBoard.Score - _lastSpawnScore >= _currentTargetDistance)))
+            if (CanSpawnWalls && _scoreBoard.Score - _lastSpawnScore >= _currentTargetDistance)
             {
                 _currentTargetDistance = _random.NextDouble()
                     * (MAX_WALL_DISTANCE - MIN_WALL_DISTANCE) + MIN_WALL_DISTANCE;
